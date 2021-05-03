@@ -5,9 +5,12 @@ import "./App.css";
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // get data from star wars
   async function fetchMoviesHandler2() {
+    // change loading state
+    setIsLoading(true);
     // call api
     const response = await fetch("https://swapi.dev/api/films/");
     // data to JSON
@@ -23,6 +26,7 @@ function App() {
     });
     // change state
     setMovies(transformedMovies);
+    setIsLoading(false);
   }
 
   // or
@@ -54,7 +58,9 @@ function App() {
         <button onClick={fetchMoviesHandler2}>Fetch Movies</button>
       </section>
       <section>
-        <MoviesList movies={movies} />
+        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
+        {!isLoading && movies.length === 0 && <p>No Force is with you</p>}
+        {isLoading && <p>Loading...</p>}
       </section>
     </React.Fragment>
   );
