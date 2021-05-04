@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -9,7 +9,8 @@ function App() {
   const [error, setError] = useState(null);
 
   // get data from star wars
-  async function fetchMoviesHandler2() {
+  // async function fetchMoviesHandler2() {
+  const fetchMoviesHandler2 = useCallback(async () => {
     // change loading state
     setIsLoading(true);
     setError(null);
@@ -43,7 +44,12 @@ function App() {
       setError(error.message);
     }
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchMoviesHandler2();
+    // list depenancies
+  }, [fetchMoviesHandler2]);
 
   let content = <p>Found no movies</p>;
 
