@@ -10,17 +10,21 @@ function App() {
   const [error, setError] = useState(null);
 
   // get data from star wars
+
   // async function fetchMoviesHandler2() {
   const fetchMoviesHandler2 = useCallback(async () => {
     // change loading state
+    const yourDB =
+      "https://react-db-api-default-rtdb.asia-southeast1.firebasedatabase.app";
+    //
     setIsLoading(true);
     setError(null);
     try {
       // call api
-      // const response = await fetch("https://swapi.dev/api/films/");
-      const response = await fetch(
-        "https://react-db-api-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json"
-      );
+      const response = await fetch(`${yourDB}/movies.json`);
+      // GET STAR WARr
+      const response2 = await fetch("https://swapi.dev/api/films/");
+
       if (!response.ok) {
         console.info(response.status);
         console.info(response.statusText);
@@ -29,11 +33,19 @@ function App() {
       }
       // data to JSON
       const data = await response.json();
+      const data2 = await response2.json();
+      // get json for star wars
+      const loadedMovies = [];
 
-      // map the object
-      // response.status console.log(response.status);
-
-      const transformedMovies = data.results.map((movieData) => {
+      for (const key in data) {
+        loadedMovies.push({
+          id: key,
+          title: data[key].title,
+          openingText: data[key].openingText,
+          releaseDate: data[key].releaseDate,
+        });
+      }
+      const starWars = data2.results.map((movieData) => {
         return {
           id: movieData.episode_id,
           title: movieData.title,
@@ -41,8 +53,11 @@ function App() {
           releaseDate: movieData.release_date,
         };
       });
-      // change state
-      setMovies(transformedMovies);
+      // console.log(fetchMoviesHandler());
+      loadedMovies.reverse().push(...starWars);
+      console.log(loadedMovies);
+
+      setMovies(loadedMovies);
     } catch (error) {
       setError(error.message);
     }
@@ -67,6 +82,7 @@ function App() {
         }
       );
       const data = await response.json();
+      fetchMoviesHandler2();
       console.log(data);
     } catch (error) {
       setError(error.message);
@@ -85,29 +101,6 @@ function App() {
   if (isLoading) {
     content = <p>Loading...</p>;
   }
-
-  // or
-  const fetchMoviesHandler = () => {
-    fetch("https://swapi.dev/api/films/")
-      // 1st promise
-      .then((response) => {
-        // returns it's own promise
-        return response.json();
-      })
-      // has now returned the js object
-      .then((data) => {
-        const transformedMovies = data.results.map((movieData) => {
-          return {
-            id: movieData.episode_id,
-            title: movieData.title,
-            openingText: movieData.opening_crawl,
-            releaseDate: movieData.release_date,
-          };
-        });
-        // change state
-        setMovies(transformedMovies);
-      });
-  };
 
   return (
     <React.Fragment>
@@ -132,3 +125,52 @@ function App() {
 }
 
 export default App;
+
+// CUT BITS:
+
+// or
+// const fetchMoviesHandler = () => {
+//   fetch("https://swapi.dev/api/films/")
+//     // 1st promise
+//     .then((response) => {
+//       // returns it's own promise
+//       return response.json();
+//     })
+//     // has now returned the js object
+//     .then((data) => {
+//       const transformedMovies = data.results.map((movieData) => {
+//         return {
+//           id: movieData.episode_id,
+//           title: movieData.title,
+//           openingText: movieData.opening_crawl,
+//           releaseDate: movieData.release_date,
+//         };
+//       });
+//       // change state
+//       setMovies(transformedMovies);
+//     });
+// };
+// const fetchMoviesHandler = () => {
+//   let loadedMovies = [];
+//   fetch("https://swapi.dev/api/films/")
+//     // 1st promise
+//     .then((response) => {
+//       // returns it's own promise
+//       return response.json();
+//     })
+//     // has now returned the js object
+//     .then((data) => {
+//       const transformedMovies = data.results.map((movieData) => {
+//         return {
+//           id: movieData.episode_id,
+//           title: movieData.title,
+//           openingText: movieData.opening_crawl,
+//           releaseDate: movieData.release_date,
+//         };
+//       });
+//       // change state
+//       // setMovies(transformedMovies);
+//       console.log(transformedMovies);
+//       return transformedMovies;
+//     });
+// };
